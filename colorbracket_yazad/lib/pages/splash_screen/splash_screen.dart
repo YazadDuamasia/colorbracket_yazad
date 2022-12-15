@@ -3,11 +3,8 @@ import 'dart:math';
 
 import 'package:colorbracket_yazad/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:particles_flutter/particles_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../config/config.dart';
 import '../../routing/routs.dart';
 import '../../utlis/utlis.dart';
 
@@ -61,10 +58,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     orientation = MediaQuery.of(context).orientation;
-    ThemeCubit theme = BlocProvider.of<ThemeCubit>(context, listen: false);
-    if (isDarkTheme != null && isDarkTheme == true) {
-      theme.changeTheme();
-    }
+
     return SafeArea(
       child: Scaffold(
         body: LayoutBuilder(
@@ -104,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
                       maxParticleSize: 8,
                       isRandSize: true,
                       isRandomColor: true,
-                      randColorList:  [
+                      randColorList: [
                         Color(Random().nextInt(0xffffffff)).withAlpha(0xff),
                         Color(Random().nextInt(0xffffffff)).withAlpha(0xff),
                         Color(Random().nextInt(0xffffffff)).withAlpha(0xff),

@@ -1,10 +1,10 @@
 import 'package:colorbracket_yazad/bloc/bloc.dart';
-import 'package:colorbracket_yazad/config/app_config.dart';
 import 'package:colorbracket_yazad/config/config.dart';
 import 'package:colorbracket_yazad/pages/error_page/error_page.dart';
 import 'package:colorbracket_yazad/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,11 +17,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Size? size;
   Orientation? orientation;
   HomeScreenCubit? _homeScreenCubit;
+  ThemeCubit? _themeCubit;
   bool isThemeDark = false;
+  var brightness;
 
   @override
   void initState() {
     super.initState();
+    var window = WidgetsBinding.instance.window;
+    window.onPlatformBrightnessChanged = () {
+      WidgetsBinding.instance.handlePlatformBrightnessChanged();
+      // This callback is called every time the brightness changes.
+      brightness = window.platformBrightness;
+    };
   }
 
   @override
@@ -31,6 +39,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _homeScreenCubit = BlocProvider.of<HomeScreenCubit>(
       context,
       listen: false,
+    );
+    _themeCubit = BlocProvider.of<ThemeCubit>(
+      context,
+      listen: true,
     );
 
     return SafeArea(
@@ -46,6 +58,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               "Home",
               style: TextStyle(color: Colors.white),
             ),
+            actions: [
+              FlutterSwitch(
+                toggleSize: 45.0,
+                value: _themeCubit!.state.theme!.brightness ==
+                        Brightness.light
+                    ? true
+                    : false,
+                borderRadius: 30.0,
+                padding: 2.0,
+                activeToggleColor: const Color(0xFF6E40C9),
+                inactiveToggleColor: const Color(0xFF2F363D),
+                activeSwitchBorder: Border.all(
+                  color: const Color(0xFF3C1E70),
+                  width: 6.0,
+                ),
+                inactiveSwitchBorder: Border.all(
+                  color: const Color(0xFFD1D5DA),
+                  width: 6.0,
+                ),
+                activeColor: const Color(0xFF271052),
+                inactiveColor: Colors.white,
+                activeIcon: const Icon(
+                  Icons.nightlight_round,
+                  color: Color(0xFFF8E3A1),
+                ),
+                inactiveIcon: const Icon(
+                  Icons.wb_sunny,
+                  color: Color(0xFFFFDF5D),
+                ),
+                onToggle: (val) async {
+                  context.read<ThemeCubit>().toggleTheme();
+                },
+              ),
+            ],
             leadingWidth: 35,
             automaticallyImplyLeading: false,
           ),
@@ -99,7 +145,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           itemBuilder: (context, index) {
                             var model = state.list[index];
                             return Card(
-                              margin: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+                              margin:
+                                  const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -110,7 +157,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.all(5.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
-
                                     children: [
                                       Row(
                                         children: [
@@ -141,10 +187,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             CrossAxisAlignment.center,
                                         children: [
                                           TextButton(
-                                            child: Text("View More"),
+                                            child: const Text("View More"),
                                             onPressed: () async {},
                                             style: TextButton.styleFrom(
-                                            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 4),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4),
                                             ),
                                           )
                                         ],
