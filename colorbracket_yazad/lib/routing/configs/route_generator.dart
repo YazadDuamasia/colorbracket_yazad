@@ -22,20 +22,37 @@ class RouteGenerator {
 
       case RouteName.loginRoute:
         Constants.debugLog(RouteGenerator, "isFirstTime:${settings.arguments}");
-        return  MaterialPageRoute(
-          builder: (_) => LoginScreen(isFirstTime:true),
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: LoginScreen(isFirstTime: settings.arguments as bool),
         );
-        // return PageTransition(
-        //   type: PageTransitionType.leftToRightWithFade,
-        //   settings: settings,
-        //   curve: Curves.easeInOut,
-        //   child: LoginScreen(isFirstTime: settings.arguments as bool),
-        // );
 
       case RouteName.homeScreenRoute:
-        return MaterialPageRoute(
-          builder: (_) => const HomePage(),
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: HomePage(),
         );
+      case RouteName.viewMoreEmployeeScreenRoute:
+        Constants.debugLog(RouteGenerator, "arg:${ settings.arguments}");
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: ViewMoreEmployeePage(position: settings.arguments as int),
+        );
+        case RouteName.webViewScreenRoute:
+        Constants.debugLog(RouteGenerator, "arg:${ settings.arguments}");
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: WebViewPage(webUrl: settings.arguments as String),
+        );
+
       default:
         return _errorRoute();
     }

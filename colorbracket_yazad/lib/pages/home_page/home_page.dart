@@ -1,6 +1,7 @@
 import 'package:colorbracket_yazad/bloc/bloc.dart';
-import 'package:colorbracket_yazad/config/config.dart';
-import 'package:colorbracket_yazad/pages/error_page/error_page.dart';
+import 'package:colorbracket_yazad/main.dart';
+import 'package:colorbracket_yazad/pages/pages.dart';
+import 'package:colorbracket_yazad/routing/routs.dart';
 import 'package:colorbracket_yazad/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   HomeScreenCubit? _homeScreenCubit;
   ThemeCubit? _themeCubit;
   bool isThemeDark = false;
+
   var brightness;
 
   @override
@@ -40,6 +42,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       context,
       listen: false,
     );
+
     _themeCubit = BlocProvider.of<ThemeCubit>(
       context,
       listen: true,
@@ -61,8 +64,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             actions: [
               FlutterSwitch(
                 toggleSize: 45.0,
-                value: _themeCubit!.state.theme!.brightness ==
-                        Brightness.light
+                value: Theme.of(context).brightness == Brightness.light
                     ? true
                     : false,
                 borderRadius: 30.0,
@@ -88,7 +90,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   color: Color(0xFFFFDF5D),
                 ),
                 onToggle: (val) async {
-                  context.read<ThemeCubit>().toggleTheme();
+                  context.read<ThemeCubit>().toggleTheme(
+                      Theme.of(context).brightness == Brightness.light
+                          ? true
+                          : false);
                 },
               ),
             ],
@@ -145,14 +150,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           itemBuilder: (context, index) {
                             var model = state.list[index];
                             return Card(
-                              margin:
-                                  const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+                              margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(10.0),
-                                onTap: () {},
+                                onTap: () async {
+                                  onItemClick(index);
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Column(
@@ -161,43 +167,56 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       Row(
                                         children: [
                                           Expanded(
-                                            child: Text(model.name ?? ""),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child:
-                                                Text(model.designation ?? ""),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(model.company ?? ""),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          TextButton(
-                                            child: const Text("View More"),
-                                            onPressed: () async {},
-                                            style: TextButton.styleFrom(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 4),
+                                            child: Text(
+                                              "Name: ${model.name ?? ""}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium,
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              "Designation: ${model.designation ?? ""}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              "Company: ${model.company ?? ""}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.end,
+                                      //   crossAxisAlignment:
+                                      //       CrossAxisAlignment.center,
+                                      //   children: [
+                                      //     TextButton(
+                                      //       child: Text("View More"),
+                                      //       onPressed: () async {
+                                      //         onItemClick(index);
+                                      //       },
+                                      //       style: TextButton.styleFrom(
+                                      //       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 4),
+                                      //       ),
+                                      //     )
+                                      //   ],
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -226,5 +245,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void onItemClick(int index) async {
+    await navigatorKey.currentState!
+        .pushNamed(RouteName.viewMoreEmployeeScreenRoute, arguments: index + 1);
   }
 }

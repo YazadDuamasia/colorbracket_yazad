@@ -27,7 +27,7 @@ class HomeScreenErrorState extends HomeScreenState {
   String? error;
   HomeScreenErrorState(this.error);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [error!];
 }
 
 class HomeScreenNoInternetState extends HomeScreenState {
